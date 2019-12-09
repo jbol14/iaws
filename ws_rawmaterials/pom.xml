@@ -1,0 +1,171 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.tuc.in.meclab.wi3</groupId>
+    <artifactId>ws_rawmaterials</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>ws_rawmaterials</name>
+    <prerequisites>
+        <maven>3.0</maven>
+    </prerequisites>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+    <dependencies>
+		<!-- for java 9-12, use the following two dependencies
+			 for java 1.8, comment them 						-->
+		<dependency>
+		  <groupId>com.sun.xml.ws</groupId>
+		  <artifactId>jaxws-ri</artifactId>
+		  <version>2.3.0</version>
+		  <type>pom</type>
+		</dependency>
+		<dependency>
+		   <groupId>javax.xml.bind</groupId>
+		   <artifactId>jaxb-api</artifactId>
+		   <version>2.3.1</version>
+		</dependency>
+		<!-- end of java 9-12 dependencies --> 
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.10</version>
+        </dependency>
+        <dependency>
+            <groupId>de.tuc.in.meclab.wi3</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/common-1.0.1-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.sap</groupId>
+            <artifactId>jco</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <!-- 
+                pick one according to your OS:
+                ${project.basedir}/src/main/resources/sapjco/sapjco3linux64/sapjco3.jar
+                
+                ${project.basedir}/src/main/resources/sapjco/sapjco3win64/sapjco3.jar
+
+				pick one according to your OS (for 32bit java/eclipse):
+				${project.basdir}/src/main/resources/sapjco/sapjco3linux32/sapjco3.jar
+				${project.basdir}/src/main/resources/sapjco/sapjco3mac32/sapjco3.jar
+				${project.basdir}/src/main/resources/sapjco/sapjco3win32/sapjco3.jar
+				
+            -->
+            <systemPath>${project.basedir}/src/main/resources/sapjco/sapjco3mac64/sapjco3.jar</systemPath>
+        </dependency>
+    </dependencies>
+    <build>
+        <!-- create default goal to run "mvn package" -->
+        <defaultGoal>package versions:display-dependency-updates versions:display-plugin-updates
+            versions:display-property-updates</defaultGoal>
+        <!-- using build plugins -->
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.5.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.6</version>
+                    <configuration>
+                        <tempWebappDirectory>${basedir}/target/site</tempWebappDirectory>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.20.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.0.2</version>
+                    <configuration>
+                        <excludes>
+                            <exclude>sapjco3linux64/</exclude>
+                            <exclude>sapjco3mac64/</exclude>
+                            <exclude>sapjco3win64/</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <!-- enable compiler warnings -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                    <compilerArgument>-Xlint:all</compilerArgument>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                    <failOnWarning>true</failOnWarning>
+                </configuration>
+            </plugin>
+            <!-- on the command "mvn clean" we clean-up some additional files -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>.</directory>
+                            <includes>
+                                <include>dependency-reduced-pom.xml</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <!-- create a executable jar file -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>de.tuc.in.meclab.wi3.CRawMaterialsApp</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
