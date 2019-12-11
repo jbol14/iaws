@@ -18,9 +18,7 @@ import de.tuc.in.meclab.wi3.webservice.MarketWSService;
  * Supplier Client
  *
  */
-public class CSupplierApp {
-	//Um zu prüfen, ob die Suppliernummer richtig ist
-	private static boolean isValidSuppliernumber = false;
+public class CSupplierAppShellGear {
 
     public static void main( final String[] p_args )
     {
@@ -35,18 +33,10 @@ public class CSupplierApp {
         MarketWSService marketService = new MarketWSService();
         MarketWS market = marketService.getMarketWSPort();
         
-        String suppliernumber = "";
+        String suppliernumber = "0000123103";
         double price;
         
         Scanner scanner = new Scanner(System.in); // Scanner erst ganz am Ende schließen, schließt auch System.in
-        
-        //Suppliernummer 
-        //Sicherstellen, dass suppliernumber mit gültigem Wert (10-stellig) belegt ist
-        while(!isValidSuppliernumber) {
-        	System.out.println("Bitte Suppliernummer angeben:");
-        	suppliernumber = scanner.nextLine();
-        	isValidSuppliernumber = validSuppliernumber(suppliernumber);
-        }
         
         // Materialliste vom WS holen
         System.out.println("Materialliste vom Webservice empfangen");
@@ -105,9 +95,9 @@ public class CSupplierApp {
       	
     	
     }
-    // Prüft, ob Suppliernummer gültig ist, d.h. 10 Zeichen lang und endet mit 103
+    // Prüft, ob Suppliernummer 
     private static boolean validSuppliernumber(String supplierNumber) {
-    	if(supplierNumber.length() == 10 && supplierNumber.endsWith("103")) {
+    	if(supplierNumber.length() == 10) {
     		return true;
     	}else {
     		return false;

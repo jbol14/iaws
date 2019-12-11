@@ -18,7 +18,7 @@ import de.tuc.in.meclab.wi3.webservice.MarketWSService;
  * Supplier Client
  *
  */
-public class CSupplierApp {
+public class CSupplierAppCologneBikeSupplies {
 	//Um zu prüfen, ob die Suppliernummer richtig ist
 	private static boolean isValidSuppliernumber = false;
 
@@ -105,9 +105,9 @@ public class CSupplierApp {
       	
     	
     }
-    // Prüft, ob Suppliernummer gültig ist, d.h. 10 Zeichen lang und endet mit 103
+    // Prüft, ob Suppliernummer 
     private static boolean validSuppliernumber(String supplierNumber) {
-    	if(supplierNumber.length() == 10 && supplierNumber.endsWith("103")) {
+    	if(supplierNumber.length() == 10) {
     		return true;
     	}else {
     		return false;
