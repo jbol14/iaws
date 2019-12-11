@@ -18,11 +18,15 @@ public class CProcurementApp
 {
     public static void main( final String[] p_args )
     {
+    	boolean isValidPartnumber = false;
+    	boolean isValidBudget = false;
+    	
         System.out.println( "GBI-Procurement Client" );
         System.out.println( "Rufe Webservice RawMaterialsWS auf" );
         
         RawMaterialsWSService service = new RawMaterialsWSService();
         RawMaterialsWS raw = service.getRawMaterialsWSPort();
+        
         CXStream xmlConverter = new CXStream();
         
         MarketWSService marketService = new MarketWSService();
@@ -43,16 +47,48 @@ public class CProcurementApp
         }
         
         Scanner scanner = new Scanner(System.in);
+        String partNumber = "";
+        //Sicherstellen, dass Parnumber gültig ist, d.h. es existiert ein Teil in rawMaterials mit dieser Nummer
+        while(!isValidPartnumber) {
+        	System.out.print("Bitte die gewünschte Teilnummer eingeben: ");
+        	partNumber = scanner.nextLine();
+        	//Teilnummer suchen
+        	for(Material m : rawMaterials) {
+        		if(m.number().contentEquals(partNumber)) {
+        			isValidPartnumber = true;
+        			break;
+        		}
+        	}
         
-        System.out.print("Bitte die gewünschte Teilnummer eingeben");
-        String partNumber = scanner.nextLine();
+        }
+        
+        String budget = "";
+        //Sicherstellen, dass Budget gültig ist, d.h. in Double geparst werden kann        
+        while(!isValidBudget) {
+        	System.out.print("Bitte Budget eingeben: ");
+        	budget = scanner.nextLine();
+        	
+        	//Falls das Budget mit Komma anggegeben wurde wird das Komma durch Punkt ersetzt damit es geparst werden kann
+        	if(budget.contains(",")) {
+        		budget = budget.replace(',', '.');
+        		
+        	}
+        	
+        	try {
+        		Double.parseDouble(budget);
+        		isValidBudget = true;
+        	}catch(Exception e) {
+        		System.out.println("Bitte ein gültiges Budget angeben");
+        	}
+        	
+        }
         
         
         
         System.out.println( "Rufe Webservice MarketWS auf" );
-        String str = market.getBestOffer(partNumber, "200.00");
+        String str = market.getBestOffer(partNumber, budget);
         
-        System.out.println(str);
+        System.out.println(str); // Test
         
         System.out.println( "Rufe Webservice OrderWS auf" );
         String result = order.placeOrder("LEARN-103", "tlestart1", str);
